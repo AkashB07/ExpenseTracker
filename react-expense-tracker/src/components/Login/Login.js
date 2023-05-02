@@ -10,7 +10,7 @@ const Login = () => {
     const emailInputRef = useRef();
     const passwordInputRef = useRef();
 
-    const logintHandler = async (event) => {
+    const loginHandler = async (event) => {
         try {
             event.preventDefault();
             const enteredEmail = emailInputRef.current.value;
@@ -24,6 +24,7 @@ const Login = () => {
             const respone = await axios.post(`${url}:4000/user/login`, loginDetails)
             if (respone.data.success) {
                 alert(respone.data.message);
+                localStorage.setItem('token', respone.data.token)
                 history.push('/');
             }
             else {
@@ -32,6 +33,7 @@ const Login = () => {
         }
 
         catch (error) {
+            alert(error.response.data.message)
             console.log(error);
         }
     }
@@ -39,10 +41,10 @@ const Login = () => {
     return (
         <Fragment><br />
             <div className="row justify-content-center">
-                <h1 className="text-center">Sign Up</h1><br /><br /><br /><br />
+                <h1 className="text-center">Login</h1><br /><br /><br /><br />
 
                 <div className="col-md-4">
-                    <form id="loginform" onSubmit={logintHandler}>
+                    <form id="loginform" onSubmit={loginHandler}>
 
                         <div className="form-group">
                             <label>Email address</label>

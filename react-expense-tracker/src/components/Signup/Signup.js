@@ -7,7 +7,6 @@ const url = 'http://localhost';
 
 const Signup = () => {
     const history = useHistory();
-    const nameInputRef = useRef();
     const emailInputRef = useRef();
     const passwordInputRef = useRef();
     const confirmPasswordInputRef = useRef();
@@ -15,7 +14,6 @@ const Signup = () => {
     const singnuptHandler = async (event) => {
         try {
             event.preventDefault();
-            const enteredName = nameInputRef.current.value;
             const enteredEmail = emailInputRef.current.value;
             const enteredPassword = passwordInputRef.current.value;
             const enteredConfirmPassword = confirmPasswordInputRef.current.value;
@@ -26,7 +24,6 @@ const Signup = () => {
             }
 
             const signupDetails = {
-                name: enteredName,
                 email: enteredEmail,
                 password: enteredPassword
             }
@@ -53,16 +50,6 @@ const Signup = () => {
 
                 <div className="col-md-4">
                     <form id="loginform" onSubmit={singnuptHandler}>
-
-                    <div className="form-group">
-                            <label>Name</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                placeholder="Name"
-                                required ref={nameInputRef}
-                            />
-                        </div><br />
 
                         <div className="form-group">
                             <label>Email address</label>

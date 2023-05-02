@@ -1,16 +1,17 @@
-import React, { useState, Fragment, useContext } from 'react';
+import React, { useState, Fragment, useContext, Link } from 'react';
 import { Route, Switch, Redirect } from "react-router-dom";
 import SignupPage from './pages/Signup';
 import LoginPage from './pages/Login';
-
+import ProfilePage from './pages/Profile';
+import Header from './components/Layout/Header';
 let App = () => {
 
   return (
     <Fragment>
       
       <Switch>
-        <Route path='/' exact> <h1>Welcome to Expense Tracker</h1> </Route>
-        
+        <Route path='/' exact><Header/></Route>
+        <Route path='/profile' exact> <ProfilePage/> </Route>
         <Route path='/login' exact> <LoginPage /> </Route>
         <Route path='/signup' exact> <SignupPage /> </Route>
         <Route path='*'> <Redirect to='/login' /> </Route>
