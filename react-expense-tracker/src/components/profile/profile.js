@@ -1,5 +1,4 @@
-import { useRef, Fragment } from 'react';
-import { Link, useHistory } from "react-router-dom";
+import { useRef, Fragment, useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
 import Button from 'react-bootstrap/Button';
 
@@ -7,10 +6,30 @@ const url = 'http://localhost';
 const token = localStorage.getItem('token');
 
 const Profile = () => {
-    const history = useHistory();
     const nameInputRef = useRef();
     const photoUrlInputRef = useRef();
-    
+
+    const [displayName, setDisplayName] = useState('');
+    const [displayPhotoUrl, setDisplayPhotoUrl] = useState('');
+
+    const getProfile = useCallback(async()=> {
+        try {
+            const respone = await axios.get(`${url}:4000/user/profile`, { headers: { "Authorization": token } });
+            console.log(respone.data.photourl, respone.data.name);
+            setDisplayName(respone.data.name);
+            setDisplayPhotoUrl(respone.data.photourl)
+        } 
+        catch (error) {
+            console.log(error);
+        }
+
+    }, [])
+
+    useEffect(() => {
+        getProfile();
+    }, [getProfile])
+
+
     const profileHandler = async (event) => {
         try {
             event.preventDefault();
@@ -22,10 +41,9 @@ const Profile = () => {
                 photourl: enteredphotoUrl
             }
 
-            const respone = await axios.post(`${url}:4000/user/profile`, profileDetails, {headers: {"Authorization" : token}})
+            const respone = await axios.post(`${url}:4000/user/profile`, profileDetails, { headers: { "Authorization": token } })
             if (respone.data.success) {
                 alert(respone.data.message);
-                history.push('/');
             }
             else {
                 throw new Error('Failed to Update');
@@ -45,12 +63,12 @@ const Profile = () => {
                 <div className="col-md-4">
                     <form id="loginform" onSubmit={profileHandler}>
 
-                    <div className="form-group">
+                        <div className="form-group">
                             <label>Name</label>
                             <input
                                 type="text"
                                 className="form-control"
-                                placeholder="Name"
+                                defaultValue={displayName}
                                 required ref={nameInputRef}
                             />
                         </div><br />
@@ -60,7 +78,7 @@ const Profile = () => {
                             <input
                                 type="text"
                                 className="form-control"
-                                placeholder="Profile Photo Url"
+                                defaultValue={displayPhotoUrl}
                                 required ref={photoUrlInputRef}
                             />
                         </div><br />
