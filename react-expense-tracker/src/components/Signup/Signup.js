@@ -1,11 +1,12 @@
 import { useRef, Fragment } from 'react';
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import axios from 'axios';
 import Button from 'react-bootstrap/Button';
 
 const url = 'http://localhost';
 
 const Signup = () => {
+    const history = useHistory();
     const nameInputRef = useRef();
     const emailInputRef = useRef();
     const passwordInputRef = useRef();
@@ -33,14 +34,15 @@ const Signup = () => {
             const respone = await axios.post(`${url}:4000/user/signup`, signupDetails)
             if (respone.status === 201) {
                 alert(respone.data.message);
+                history.push('/login');
             }
             else {
-                throw new Error('Failed to Signup')
+                throw new Error('Failed to Signup');
             }
         }
 
         catch (error) {
-            console(error);
+            console.log(error);
         }
     }
 
