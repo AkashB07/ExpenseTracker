@@ -24,7 +24,21 @@ const Login = () => {
             const respone = await axios.post(`${url}:4000/user/login`, loginDetails)
             if (respone.data.success) {
                 alert(respone.data.message);
-                localStorage.setItem('token', respone.data.token)
+                localStorage.setItem('token', respone.data.token);
+
+                const res = await fetch("https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyDjqOQY_V4SVhSavTu5M9Y4qf1NFLRbo_0",
+                    {
+                        method: "POST",
+                        body: JSON.stringify({
+                            email: enteredEmail,
+                            password: enteredPassword,
+                            returnSecureToken: true,
+                        }),
+                    }
+                )
+                const data = await res.json();
+                localStorage.setItem("tokenID", data.idToken);
+
                 history.push('/');
             }
             else {
@@ -66,7 +80,7 @@ const Login = () => {
                             />
                         </div><br />
 
-                      
+
                         <div className="d-grid gap-2">
                             <Button type="submit" variant="primary" size="lg">Login</Button><br />
                             <p className="text-center"> <Link to="/signup">New User? Signup</Link></p><br />

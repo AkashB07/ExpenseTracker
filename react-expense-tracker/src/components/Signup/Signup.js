@@ -28,9 +28,23 @@ const Signup = () => {
                 password: enteredPassword
             }
 
+
             const respone = await axios.post(`${url}:4000/user/signup`, signupDetails)
             if (respone.status === 201) {
                 alert(respone.data.message);
+                await fetch("https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyDjqOQY_V4SVhSavTu5M9Y4qf1NFLRbo_0",
+                    {
+                        method: "POST",
+                        body: JSON.stringify({
+                            email: enteredEmail,
+                            password: enteredPassword,
+                            returnSecureToken: true,
+                        }),
+                        header: {
+                            "Content-Type": "application/json",
+                        },
+                    });
+
                 history.push('/login');
             }
             else {

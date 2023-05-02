@@ -4,6 +4,7 @@ import Button from 'react-bootstrap/Button';
 
 const url = 'http://localhost';
 const token = localStorage.getItem('token');
+const tokenId = localStorage.getItem("tokenID");
 
 const Profile = () => {
     const nameInputRef = useRef();
@@ -12,13 +13,12 @@ const Profile = () => {
     const [displayName, setDisplayName] = useState('');
     const [displayPhotoUrl, setDisplayPhotoUrl] = useState('');
 
-    const getProfile = useCallback(async()=> {
+    const getProfile = useCallback(async () => {
         try {
             const respone = await axios.get(`${url}:4000/user/profile`, { headers: { "Authorization": token } });
-            console.log(respone.data.photourl, respone.data.name);
             setDisplayName(respone.data.name);
             setDisplayPhotoUrl(respone.data.photourl)
-        } 
+        }
         catch (error) {
             console.log(error);
         }
@@ -44,6 +44,19 @@ const Profile = () => {
             const respone = await axios.post(`${url}:4000/user/profile`, profileDetails, { headers: { "Authorization": token } })
             if (respone.data.success) {
                 alert(respone.data.message);
+                await fetch("https://identitytoolkit.googleapis.com/v1/accounts:update?key=AIzaSyDjqOQY_V4SVhSavTu5M9Y4qf1NFLRbo_0",
+                    {
+                        method: "POST",
+                        body: JSON.stringify({
+                            idToken: tokenId,
+                            displayName: enteredname,
+                            photoUrl: enteredphotoUrl,
+                            returnSecureToken: true,
+                        }),
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                    });
             }
             else {
                 throw new Error('Failed to Update');
