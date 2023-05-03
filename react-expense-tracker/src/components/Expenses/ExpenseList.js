@@ -22,9 +22,9 @@ const ExpenseList = (props) => {
                                 <tr key={expense._id}>
                                     <td>{expense.amount}</td>
                                     <td>{expense.description}</td>
-                                    <td>{expense.description}</td>
-                                    <td><Button type="submit" variant="info" size="sm">Edit</Button></td>
-                                    <td><Button type="submit" variant="danger" size="sm">Delete</Button></td>
+                                    <td>{expense.category}</td>
+                                    <td><Button type="submit" variant="info" size="sm" onClick={() => props.editExpense(expense._id, expense.amount, expense.description, expense.category)}>Edit</Button></td>
+                                    <td><Button type="submit" variant="danger" size="sm" onClick={() => props.deletExpense(expense._id)}>Delete</Button></td>
                                 </tr>
                             );
                         })}

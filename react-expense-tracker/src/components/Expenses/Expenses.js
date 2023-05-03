@@ -8,13 +8,13 @@ import ExpenseList from './ExpenseList';
 
 
 const url = 'http://localhost';
-const token = localStorage.getItem('token');
 let btn1, btn2, btn3;
 
 const Expenses = () => {
     const [expense, setExpense] = useState([]);
     const [hasPreviousPage, setHasPreviousPage] = useState([]);
     const [hasNextPage, setHasNextPage] = useState([]);
+    const token = localStorage.getItem('token');
 
 
     const amountInputRef = useRef();
@@ -80,11 +80,35 @@ const Expenses = () => {
 
             const res = await axios.post(`${url}:4000/expense/addexpense`, expenseDetails, { headers: { "Authorization": token } });
             if (res.status === 200) {
-                alert('Successfuly added the Expense');
                 getExpensHandler(1);
             }
         }
 
+        catch (error) {
+            console.log(error);
+        }
+    }
+
+    const deletExpenseHandler = async (expenseId) => {
+        try {
+            await axios.delete(`${url}:4000/expense/deleteexpense/${expenseId}`, {headers: {"Authorization" : token}});
+            getExpensHandler(1);
+            alert('Successfuly deleted the Expense');
+            
+        } 
+        catch (error) {
+            console.log(error);
+        }
+    }
+
+    const editExpenseHandler = async (expenseId, amount, description, category) => {
+        try {
+            amountInputRef.current.value = amount;
+            descriptionInputRef.current.value = description;
+            categoryInputRef.current.value = category;
+            await axios.delete(`${url}:4000/expense/deleteexpense/${expenseId}`, {headers: {"Authorization" : token}});
+            
+        } 
         catch (error) {
             console.log(error);
         }
@@ -143,10 +167,10 @@ const Expenses = () => {
                             <Button type="submit" variant="success" size="md">Add</Button>
                         </div>
 
-                    </Form><br /><br /><br />
+                    </Form><br/><br/><br/>
                 </div>
             </div>
-            <ExpenseList items={expense} />
+            <ExpenseList items={expense} deletExpense={deletExpenseHandler} editExpense={editExpenseHandler}/><br/><br/>
             <div className="text-center">
                 {hasPreviousPage > 0 && btn2}
                 {btn1}

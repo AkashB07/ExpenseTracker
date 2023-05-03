@@ -21,11 +21,12 @@ const Login = () => {
                 password: enteredPassword
             }
 
-            const respone = await axios.post(`${url}:4000/user/login`, loginDetails)
+            const respone = await axios.post(`${url}:4000/user/login`, loginDetails);
+            localStorage.setItem('token', respone.data.token);
+            console.log(localStorage.getItem('token'))
             if (respone.data.success) {
-                console.log(respone.data.token)
+                console.log(respone.data.user)
                 alert(respone.data.message);
-                localStorage.setItem('token', respone.data.token);
 
                 const res = await fetch("https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyDjqOQY_V4SVhSavTu5M9Y4qf1NFLRbo_0",
                     {
