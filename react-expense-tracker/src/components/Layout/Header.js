@@ -3,10 +3,12 @@ import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import { Button } from "react-bootstrap";
+import { useHistory } from 'react-router-dom';
 
 const tokenId = localStorage.getItem("tokenID");
 
 const Header = props => {
+  const history = useHistory();
 
   const verifyEmail = async () => {
     try {
@@ -33,6 +35,12 @@ const Header = props => {
     }
   }
 
+  const logoutHandler = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("tokenID");
+    history.replace("/login");
+  }
+
   return (
     <Fragment>
       <Navbar bg="dark" variant="dark">
@@ -42,6 +50,7 @@ const Header = props => {
             <Nav.Link href="/profile">Update Profile</Nav.Link>
           </Nav>
           <Button variant="secondary" onClick={verifyEmail}>Verify Email</Button>
+          <Button variant="danger" onClick={logoutHandler} >Logout</Button>
         </Container>
       </Navbar>
 
