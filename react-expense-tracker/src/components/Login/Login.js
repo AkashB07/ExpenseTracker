@@ -82,7 +82,8 @@ const Login = () => {
 
 
                         <div className="d-grid gap-2">
-                            <Button type="submit" variant="primary" size="lg">Login</Button><br />
+                        <p className="text-center"> <Link to="/password">Forgot Password?</Link></p>
+                            <Button type="submit" variant="primary" size="lg">Login</Button>
                             <p className="text-center"> <Link to="/signup">New User? Signup</Link></p><br />
                         </div>
 
