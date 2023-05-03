@@ -23,6 +23,7 @@ const Login = () => {
 
             const respone = await axios.post(`${url}:4000/user/login`, loginDetails)
             if (respone.data.success) {
+                console.log(respone.data.token)
                 alert(respone.data.message);
                 localStorage.setItem('token', respone.data.token);
 
@@ -39,7 +40,7 @@ const Login = () => {
                 const data = await res.json();
                 localStorage.setItem("tokenID", data.idToken);
 
-                history.push('/');
+                history.push('/home');
             }
             else {
                 throw new Error('Failed to Login');

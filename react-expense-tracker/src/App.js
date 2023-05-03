@@ -14,7 +14,7 @@ let App = () => {
     <Fragment>
       
       <Switch>
-        <Route path='/' exact><Header/><HomePage/></Route>
+        <Route path='/home' exact><Header/><HomePage/></Route>
         <Route path='/login' exact> <LoginPage /> </Route>
         <Route path='/signup' exact> <SignupPage /> </Route>
         <Route path='/password' exact> <PasswordPage /> </Route>
