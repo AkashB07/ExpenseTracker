@@ -1,5 +1,5 @@
 import { useRef, Fragment } from 'react';
-import { Link, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import axios from 'axios';
 import Button from 'react-bootstrap/Button';
 
@@ -37,41 +37,13 @@ const Password = () => {
                 if (res.ok) {
                     alert("Reset Link Sent");
                 }
-            } else {
+            } 
+            else {
                 throw new Error('Something went wrong!!!')
             }
-
-            // if (respone.data.success) {
-            //     alert(respone.data.message);
-            //     localStorage.setItem('token', respone.data.token);
-
-            // const res = await fetch("https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyDjqOQY_V4SVhSavTu5M9Y4qf1NFLRbo_0",
-            //     {
-            //         method: "POST",
-            //         body: JSON.stringify({
-            //             requestType: "PASSWORD_RESET",
-            //             email: enteredEmail,
-            //         }),
-            //         headers: {
-            //             "Content-Type": "application/json",
-            //         }
-            //     }
-            // )
-            // if (res.ok) {
-            //     alert("Reset Link Sent");
-            // }
-            // const data = await res.json();
-            // localStorage.setItem("tokenID", data.idToken);
-
-            // history.push('/');
-            // }
-            // else {
-            //     throw new Error('Failed to Login');
-            // }
         }
 
         catch (error) {
-            // alert(error.response.data.message)
             console.log(error);
         }
     }
