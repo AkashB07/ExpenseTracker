@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialExpenseState = {
     expense:[],
     totalexpense:0,
+    allExpense:[]
 };
 
 const expenseSlice = createSlice({
@@ -11,6 +12,9 @@ const expenseSlice = createSlice({
     reducers:{
         expense(state, action){
             state.expense = [...action.payload];
+        },
+        allExpense(state, action){
+            state.allExpense = [...action.payload];
         },
         totalexpense(state, action){
             state.totalexpense = state.totalexpense + action.payload;

@@ -1,12 +1,10 @@
 import { useRef, Fragment } from 'react';
-import { useHistory } from "react-router-dom";
 import axios from 'axios';
 import Button from 'react-bootstrap/Button';
 
 const url = 'http://localhost';
 
 const Password = () => {
-    const history = useHistory();
     const emailInputRef = useRef();
 
     const passwordHandler = async (event) => {

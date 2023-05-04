@@ -1,21 +1,19 @@
-import { Fragment, useContext } from "react";
+import { Fragment } from "react";
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import { Button } from "react-bootstrap";
 import { useHistory } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-
+import { useDispatch } from 'react-redux';
 
 import { authActions } from '../../store/auth';
-
-const tokenId = localStorage.getItem("tokenID");
+import { themesActions } from "../../store/theme";
 
 const Header = props => {
+
   const dispatch = useDispatch();
-  // const isLogin = useSelector(state => state.auth.isLogin);
-  const isLogin = true;
   const history = useHistory();
+  const tokenId = localStorage.getItem("tokenID");
 
   const verifyEmail = async () => {
     try {
@@ -44,8 +42,10 @@ const Header = props => {
 
   const logoutHandler = () => {
     dispatch(authActions.logout());
+    dispatch(themesActions.themeLogOut(false));
     localStorage.removeItem("token");
     localStorage.removeItem("tokenID");
+    localStorage.removeItem("theme");
     history.replace("/login");
   }
 
@@ -54,17 +54,13 @@ const Header = props => {
       <Navbar bg="dark" variant="dark">
         <Container>
           <Navbar.Brand href="/home"><h1>Expense Tracker</h1></Navbar.Brand>
-          {
-            isLogin && (<Fragment>
-              <Nav className="me-auto">
-                <Nav.Link href="/profile">Update Profile</Nav.Link>
-              </Nav>
-              <Button variant="secondary" onClick={verifyEmail}>Verify Email</Button>
-              <Button variant="danger" onClick={logoutHandler} >Logout</Button>
-
-            </Fragment>
-            )
-          }
+          <Fragment>
+            <Nav className="me-auto">
+              <Nav.Link href="/profile">Update Profile</Nav.Link>
+            </Nav>
+            <Button variant="secondary" onClick={verifyEmail}>Verify Email</Button>
+            <Button variant="danger" onClick={logoutHandler} >Logout</Button>
+          </Fragment>
         </Container>
       </Navbar>
 

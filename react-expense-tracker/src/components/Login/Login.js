@@ -28,7 +28,7 @@ const Login = () => {
     
             if (respone.data.success) {
                 localStorage.setItem('token', respone.data.token);
-
+                localStorage.setItem('theme', true);
                 dispatch(authActions.login(respone.data));
                 alert(respone.data.message);
 

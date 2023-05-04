@@ -8,6 +8,8 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { expenseActions } from "../../store/expense";
 import ExpenseList from './ExpenseList';
+import Premium from '../Premium/Premium';
+import { themesActions } from "../../store/theme";
 
 
 const url = 'http://localhost';
@@ -18,6 +20,7 @@ const Expenses = () => {
     const [hasPreviousPage, setHasPreviousPage] = useState([]);
     const [hasNextPage, setHasNextPage] = useState([]);
     const [premium, setPremium] = useState(false);
+    const [primefeatures, setPrimefeatures] = useState(false);
 
     const TotalExpense = useSelector((state) => state.expense.totalexpense);
     const dispatch = useDispatch();
@@ -34,19 +37,16 @@ const Expenses = () => {
     const getExpensHandler = useCallback(async (page) => {
         try {
             const respone = await axios.get(`${url}:4000/expense/getexpenses/?page=${page}`, { headers: { "Authorization": token } });
-            const storeData = [];
-            respone.data.expenses.forEach(expense => {
-                storeData.push(expense);
-            });
+            dispatch(expenseActions.expense(respone.data.expenses));
+            console.log()
 
             dispatch(expenseActions.cleartotalexpense());
             const resAll = await axios.get(`${url}:4000/expense/getallexpenses`, { headers: { "Authorization": token } });
+            dispatch(expenseActions.allExpense(resAll.data.expenses));
             resAll.data.expenses.forEach(expense => {
                 dispatch(expenseActions.totalexpense(expense.amount));
             });
-
-
-            dispatch(expenseActions.expense(storeData));
+ 
             pagination(respone);
         }
         catch (error) {
@@ -62,10 +62,22 @@ const Expenses = () => {
     useEffect(() => {
         if (TotalExpense >= 10000) {
             setPremium(true);
-        } else {
+        } 
+        else {
             setPremium(false);
+            if (TotalExpense >= 10000) {
+                setPremium(true);
+            } 
+            else {
+                setPremium(false);
+            }
         }
     }, [TotalExpense]);
+
+    const activatePremiumHandler = () => {
+        dispatch(themesActions.themeLogOut(false));
+        setPrimefeatures(!primefeatures);
+      };
 
     const pagination = (respone) => {
         if (respone.data) {
@@ -149,7 +161,7 @@ const Expenses = () => {
                         <Row className="mb-3">
 
                             <Form.Group as={Col} >
-                                <Form.Label>Choose Expense Amount</Form.Label>
+                                <label>Choose Expense Amount</label>
                                 <input
                                     type="amount"
                                     className="form-control"
@@ -159,7 +171,7 @@ const Expenses = () => {
                             </Form.Group>
 
                             <Form.Group as={Col} >
-                                <Form.Label>Choose Expense Description</Form.Label>
+                                <label>Choose Expense Description</label>
                                 <input
                                     type="text"
                                     className="form-control"
@@ -169,7 +181,7 @@ const Expenses = () => {
                             </Form.Group>
 
                             <Form.Group as={Col} >
-                                <Form.Label>Choose Expense Category</Form.Label>
+                                <label>Choose Expense Category</label>
                                 <select
                                     type="text"
                                     className="form-control"
@@ -196,9 +208,9 @@ const Expenses = () => {
                 </div>
             </div>
             <div className="text-center">
-            {premium && <Button variant="outline-success">Activate Premium</Button>}<br /><br /><br />
-                <h3>Total Expense: ₹{TotalExpense}</h3>
-                
+            <h3>Total Expense: ₹{TotalExpense}</h3>
+            {premium && <Button variant="outline-success" onClick={activatePremiumHandler}>{primefeatures ?'Deactivate Premium' : 'Activate Premium'}</Button>}<br /><br />
+            {primefeatures && premium &&  <Premium />}
             </div><br />
             <ExpenseList deletExpense={deletExpenseHandler} editExpense={editExpenseHandler} /><br />
             <div className="text-center">

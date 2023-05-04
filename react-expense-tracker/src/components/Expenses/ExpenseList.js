@@ -8,8 +8,8 @@ const ExpenseList = (props) => {
 
     return (
         <div className="row justify-content-center">
-            <div className="col-md-10">
-                <Table striped>
+            <div className="col-md-10" >
+                <Table striped bordered hover variant="light">
                     <thead>
                         <tr>
                             <th><h5 className="fw-bold">Amount</h5></th>
