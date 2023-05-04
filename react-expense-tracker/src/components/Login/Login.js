@@ -2,10 +2,13 @@ import { useRef, Fragment } from 'react';
 import { Link, useHistory } from "react-router-dom";
 import axios from 'axios';
 import Button from 'react-bootstrap/Button';
+import { useDispatch } from 'react-redux';
+import { authActions } from '../../store/auth';
 
 const url = 'http://localhost';
 
 const Login = () => {
+    const dispatch = useDispatch();
     const history = useHistory();
     const emailInputRef = useRef();
     const passwordInputRef = useRef();
@@ -22,10 +25,11 @@ const Login = () => {
             }
 
             const respone = await axios.post(`${url}:4000/user/login`, loginDetails);
-            localStorage.setItem('token', respone.data.token);
-            console.log(localStorage.getItem('token'))
+    
             if (respone.data.success) {
-                console.log(respone.data.user)
+                localStorage.setItem('token', respone.data.token);
+
+                dispatch(authActions.login(respone.data));
                 alert(respone.data.message);
 
                 const res = await fetch("https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyDjqOQY_V4SVhSavTu5M9Y4qf1NFLRbo_0",

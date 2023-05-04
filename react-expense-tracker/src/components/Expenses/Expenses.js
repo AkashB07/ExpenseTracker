@@ -4,6 +4,9 @@ import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
+import { useDispatch, useSelector } from "react-redux";
+
+import { expenseActions } from "../../store/expense";
 import ExpenseList from './ExpenseList';
 
 
@@ -11,10 +14,16 @@ const url = 'http://localhost';
 let btn1, btn2, btn3;
 
 const Expenses = () => {
-    const [expense, setExpense] = useState([]);
+
     const [hasPreviousPage, setHasPreviousPage] = useState([]);
     const [hasNextPage, setHasNextPage] = useState([]);
-    const token = localStorage.getItem('token');
+    const [premium, setPremium] = useState(false);
+
+    const TotalExpense = useSelector((state) => state.expense.totalexpense);
+    const dispatch = useDispatch();
+
+    const token = localStorage.getItem("token");
+    // const token = useSelector(state => state.auth.token);
 
 
     const amountInputRef = useRef();
@@ -29,7 +38,15 @@ const Expenses = () => {
             respone.data.expenses.forEach(expense => {
                 storeData.push(expense);
             });
-            setExpense([...storeData]);
+
+            dispatch(expenseActions.cleartotalexpense());
+            const resAll = await axios.get(`${url}:4000/expense/getallexpenses`, { headers: { "Authorization": token } });
+            resAll.data.expenses.forEach(expense => {
+                dispatch(expenseActions.totalexpense(expense.amount));
+            });
+
+
+            dispatch(expenseActions.expense(storeData));
             pagination(respone);
         }
         catch (error) {
@@ -39,8 +56,16 @@ const Expenses = () => {
     }, [])
 
     useEffect(() => {
-        getExpensHandler(1);
+        getExpensHandler();
     }, [getExpensHandler]);
+
+    useEffect(() => {
+        if (TotalExpense >= 10000) {
+            setPremium(true);
+        } else {
+            setPremium(false);
+        }
+    }, [TotalExpense]);
 
     const pagination = (respone) => {
         if (respone.data) {
@@ -91,11 +116,11 @@ const Expenses = () => {
 
     const deletExpenseHandler = async (expenseId) => {
         try {
-            await axios.delete(`${url}:4000/expense/deleteexpense/${expenseId}`, {headers: {"Authorization" : token}});
+            await axios.delete(`${url}:4000/expense/deleteexpense/${expenseId}`, { headers: { "Authorization": token } });
             getExpensHandler(1);
             alert('Successfuly deleted the Expense');
-            
-        } 
+
+        }
         catch (error) {
             console.log(error);
         }
@@ -106,9 +131,9 @@ const Expenses = () => {
             amountInputRef.current.value = amount;
             descriptionInputRef.current.value = description;
             categoryInputRef.current.value = category;
-            await axios.delete(`${url}:4000/expense/deleteexpense/${expenseId}`, {headers: {"Authorization" : token}});
-            
-        } 
+            await axios.delete(`${url}:4000/expense/deleteexpense/${expenseId}`, { headers: { "Authorization": token } });
+
+        }
         catch (error) {
             console.log(error);
         }
@@ -167,10 +192,15 @@ const Expenses = () => {
                             <Button type="submit" variant="success" size="md">Add</Button>
                         </div>
 
-                    </Form><br/><br/><br/>
+                    </Form><br />
                 </div>
             </div>
-            <ExpenseList items={expense} deletExpense={deletExpenseHandler} editExpense={editExpenseHandler}/><br/><br/>
+            <div className="text-center">
+            {premium && <Button variant="outline-success">Activate Premium</Button>}<br /><br /><br />
+                <h3>Total Expense: ₹{TotalExpense}</h3>
+                
+            </div><br />
+            <ExpenseList deletExpense={deletExpenseHandler} editExpense={editExpenseHandler} /><br />
             <div className="text-center">
                 {hasPreviousPage > 0 && btn2}
                 {btn1}

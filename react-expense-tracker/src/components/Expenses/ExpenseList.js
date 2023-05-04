@@ -1,8 +1,11 @@
 import React from "react";
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
+import { useSelector} from 'react-redux';
 
 const ExpenseList = (props) => {
+    const storedExpense = useSelector((state) => state.expense.expense);
+
     return (
         <div className="row justify-content-center">
             <div className="col-md-10">
@@ -17,7 +20,7 @@ const ExpenseList = (props) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {props.items.map((expense) => {
+                        {storedExpense.map((expense) => {
                             return (
                                 <tr key={expense._id}>
                                     <td>{expense.amount}</td>
