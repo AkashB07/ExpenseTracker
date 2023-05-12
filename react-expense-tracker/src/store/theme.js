@@ -9,7 +9,7 @@ const themeSlice = createSlice({
         theme(state){
             state.theme = !state.theme;
         },
-        themeLogOut(state, action){
+        themeLog(state, action){
             state.theme = action.payload;
         }
     },

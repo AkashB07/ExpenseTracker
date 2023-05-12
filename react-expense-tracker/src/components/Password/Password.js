@@ -15,27 +15,13 @@ const Password = () => {
             const loginDetails = {
                 email: enteredEmail
             }
+            emailInputRef.current.value = '';
 
             const respone = await axios.post(`${url}:4000/password/forgotpassword`, loginDetails)
-            console.log(respone)
             if (respone.status === 200) {
                 console.log("Mail Successfuly sent");
-                const res = await fetch("https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyDjqOQY_V4SVhSavTu5M9Y4qf1NFLRbo_0",
-                    {
-                        method: "POST",
-                        body: JSON.stringify({
-                            requestType: "PASSWORD_RESET",
-                            email: enteredEmail,
-                        }),
-                        headers: {
-                            "Content-Type": "application/json",
-                        }
-                    }
-                )
-                if (res.ok) {
-                    alert("Reset Link Sent");
-                }
-            } 
+                alert("Reset Link Sent");
+            }
             else {
                 throw new Error('Something went wrong!!!')
             }

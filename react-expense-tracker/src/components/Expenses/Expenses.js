@@ -10,6 +10,7 @@ import { expenseActions } from "../../store/expense";
 import ExpenseList from './ExpenseList';
 import Premium from '../Premium/Premium';
 import { themesActions } from "../../store/theme";
+import { authActions } from '../../store/auth';
 
 
 const url = 'http://localhost';
@@ -17,17 +18,16 @@ let btn1, btn2, btn3;
 
 const Expenses = () => {
 
+    const token = useSelector(state => state.auth.token);
+    const pr = useSelector(state => state.auth.isPremium);
+
     const [hasPreviousPage, setHasPreviousPage] = useState([]);
     const [hasNextPage, setHasNextPage] = useState([]);
     const [premium, setPremium] = useState(false);
-    const [primefeatures, setPrimefeatures] = useState(false);
+    const [primefeatures, setPrimefeatures] = useState(pr);
 
     const TotalExpense = useSelector((state) => state.expense.totalexpense);
     const dispatch = useDispatch();
-
-    const token = localStorage.getItem("token");
-    // const token = useSelector(state => state.auth.token);
-
 
     const amountInputRef = useRef();
     const descriptionInputRef = useRef();
@@ -38,7 +38,6 @@ const Expenses = () => {
         try {
             const respone = await axios.get(`${url}:4000/expense/getexpenses/?page=${page}`, { headers: { "Authorization": token } });
             dispatch(expenseActions.expense(respone.data.expenses));
-            console.log()
 
             dispatch(expenseActions.cleartotalexpense());
             const resAll = await axios.get(`${url}:4000/expense/getallexpenses`, { headers: { "Authorization": token } });
@@ -60,23 +59,29 @@ const Expenses = () => {
     }, [getExpensHandler]);
 
     useEffect(() => {
-        if (TotalExpense >= 10000) {
+        if (TotalExpense >= 10000 || TotalExpense === 0) {
             setPremium(true);
         } 
         else {
+            axios.patch(`${url}:4000/user/update`, { ispremiumuser: false }, { headers: { "Authorization": token } }).then(()=>{
+            })
+            dispatch(authActions.premium(false));
+            dispatch(themesActions.themeLog(false));
             setPremium(false);
-            if (TotalExpense >= 10000) {
-                setPremium(true);
-            } 
-            else {
-                setPremium(false);
-            }
+            setPrimefeatures(false);
         }
     }, [TotalExpense]);
 
-    const activatePremiumHandler = () => {
-        dispatch(themesActions.themeLogOut(false));
-        setPrimefeatures(!primefeatures);
+    const activatePremiumHandler = async () => {
+        try {
+            dispatch(themesActions.themeLog(false));
+            setPrimefeatures(!primefeatures);
+            dispatch(authActions.premium(!primefeatures));
+            await axios.patch(`${url}:4000/user/update`, { ispremiumuser: !primefeatures }, { headers: { "Authorization": token } });
+        } 
+        catch (error) {
+            console.log(error);
+        }
       };
 
     const pagination = (respone) => {
@@ -209,7 +214,7 @@ const Expenses = () => {
             </div>
             <div className="text-center">
             <h3>Total Expense: ₹{TotalExpense}</h3>
-            {premium && <Button variant="outline-success" onClick={activatePremiumHandler}>{primefeatures ?'Deactivate Premium' : 'Activate Premium'}</Button>}<br /><br />
+            {premium && TotalExpense!==0 && <Button variant="outline-success" onClick={activatePremiumHandler}>{primefeatures ?'Deactivate Premium' : 'Activate Premium'}</Button>}<br /><br />
             {primefeatures && premium &&  <Premium />}
             </div><br />
             <ExpenseList deletExpense={deletExpenseHandler} editExpense={editExpenseHandler} /><br />

@@ -3,7 +3,9 @@ import { Link, useHistory } from "react-router-dom";
 import axios from 'axios';
 import Button from 'react-bootstrap/Button';
 import { useDispatch } from 'react-redux';
+
 import { authActions } from '../../store/auth';
+import { themesActions } from "../../store/theme";
 
 const url = 'http://localhost';
 
@@ -25,25 +27,11 @@ const Login = () => {
             }
 
             const respone = await axios.post(`${url}:4000/user/login`, loginDetails);
-    
-            if (respone.data.success) {
-                localStorage.setItem('token', respone.data.token);
-                localStorage.setItem('theme', true);
-                dispatch(authActions.login(respone.data));
-                alert(respone.data.message);
 
-                const res = await fetch("https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyDjqOQY_V4SVhSavTu5M9Y4qf1NFLRbo_0",
-                    {
-                        method: "POST",
-                        body: JSON.stringify({
-                            email: enteredEmail,
-                            password: enteredPassword,
-                            returnSecureToken: true,
-                        }),
-                    }
-                )
-                const data = await res.json();
-                localStorage.setItem("tokenID", data.idToken);
+            if (respone.data.success) {
+                dispatch(authActions.login({ token: respone.data.token, ispremiumuser: respone.data.user.ispremiumuser }));
+                dispatch(themesActions.themeLog(respone.data.user.ispremiumuser));
+                alert(respone.data.message);
 
                 history.push('/home');
             }
@@ -53,8 +41,8 @@ const Login = () => {
         }
 
         catch (error) {
-            alert(error.response.data.message)
             console.log(error);
+            alert(error.response.data.message)
         }
     }
 
@@ -88,7 +76,7 @@ const Login = () => {
 
 
                         <div className="d-grid gap-2">
-                        <p className="text-center"> <Link to="/password">Forgot Password?</Link></p>
+                            <p className="text-center"> <Link to="/password">Forgot Password?</Link></p>
                             <Button type="submit" variant="primary" size="lg">Login</Button>
                             <p className="text-center"> <Link to="/signup">New User? Signup</Link></p><br />
                         </div>

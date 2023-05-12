@@ -7,6 +7,7 @@ const url = 'http://localhost';
 
 const Signup = () => {
     const history = useHistory();
+    const nameInputRef = useRef();
     const emailInputRef = useRef();
     const passwordInputRef = useRef();
     const confirmPasswordInputRef = useRef();
@@ -14,6 +15,7 @@ const Signup = () => {
     const singnuptHandler = async (event) => {
         try {
             event.preventDefault();
+            const enteredName = nameInputRef.current.value;
             const enteredEmail = emailInputRef.current.value;
             const enteredPassword = passwordInputRef.current.value;
             const enteredConfirmPassword = confirmPasswordInputRef.current.value;
@@ -24,6 +26,7 @@ const Signup = () => {
             }
 
             const signupDetails = {
+                name: enteredName,
                 email: enteredEmail,
                 password: enteredPassword
             }
@@ -32,18 +35,6 @@ const Signup = () => {
             const respone = await axios.post(`${url}:4000/user/signup`, signupDetails)
             if (respone.status === 201) {
                 alert(respone.data.message);
-                await fetch("https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyDjqOQY_V4SVhSavTu5M9Y4qf1NFLRbo_0",
-                    {
-                        method: "POST",
-                        body: JSON.stringify({
-                            email: enteredEmail,
-                            password: enteredPassword,
-                            returnSecureToken: true,
-                        }),
-                        header: {
-                            "Content-Type": "application/json",
-                        },
-                    });
 
                 history.push('/login');
             }
@@ -64,6 +55,16 @@ const Signup = () => {
 
                 <div className="col-md-4">
                     <form id="loginform" onSubmit={singnuptHandler}>
+
+                    <div className="form-group">
+                            <label>Name</label>
+                            <input
+                                type="name"
+                                className="form-control"
+                                placeholder="Name"
+                                required ref={nameInputRef}
+                            />
+                        </div><br />
 
                         <div className="form-group">
                             <label>Email address</label>

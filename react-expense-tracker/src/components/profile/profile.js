@@ -1,14 +1,15 @@
 import { useRef, Fragment, useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
 import Button from 'react-bootstrap/Button';
+import { useSelector } from "react-redux";
 
 const url = 'http://localhost';
-const token = localStorage.getItem('token');
-const tokenId = localStorage.getItem("tokenID");
 
 const Profile = () => {
     const nameInputRef = useRef();
     const photoUrlInputRef = useRef();
+
+    const token = useSelector(state => state.auth.token);
 
     const [displayName, setDisplayName] = useState('');
     const [displayPhotoUrl, setDisplayPhotoUrl] = useState('');
@@ -44,19 +45,6 @@ const Profile = () => {
             const respone = await axios.post(`${url}:4000/user/profile`, profileDetails, { headers: { "Authorization": token } })
             if (respone.data.success) {
                 alert(respone.data.message);
-                await fetch("https://identitytoolkit.googleapis.com/v1/accounts:update?key=AIzaSyDjqOQY_V4SVhSavTu5M9Y4qf1NFLRbo_0",
-                    {
-                        method: "POST",
-                        body: JSON.stringify({
-                            idToken: tokenId,
-                            displayName: enteredname,
-                            photoUrl: enteredphotoUrl,
-                            returnSecureToken: true,
-                        }),
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                    });
             }
             else {
                 throw new Error('Failed to Update');
